@@ -1,0 +1,77 @@
+#include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
+
+#define ANCHO_PANTALLA 128
+#define ALTO_PANTALLA 64
+
+// Crea el objeto de display: dirección I2C 0x3C es común
+Adafruit_SSD1306 display(ANCHO_PANTALLA, ALTO_PANTALLA, &Wire, -1);
+
+int estadoBoton1Anterior =LOW;
+int entradas[] = {2,3};
+int posicionBoton = 4;
+int contadorBoton1 = 0;
+int estadoBotonAnterior = LOW; 
+unsigned long  millisBoton = 0;
+int modo = 0;
+int pisicionMedidorLuz = A0;
+
+
+void setup()
+{
+  Serial.begin(9600);
+  pinMode(LED_BUILTIN, OUTPUT);
+  for (int i = 0; i < sizeof(entradas); i++ ){
+  	pinMode(entradas[i], OUTPUT);
+  }
+  pinMode(posicionBoton, INPUT);
+  pinMode(pisicionMedidorLuz,INPUT);
+  
+  // Inicializa el OLED
+  if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
+    Serial.println(F("No se encontró el OLED"));
+    while (true); // Detiene si falla
+  }
+
+  display.clearDisplay(); // Limpia pantalla
+  display.setTextSize(3); // Tamaño de letra (1 a 3)
+  display.setTextColor(SSD1306_WHITE);
+ // display.setCursor(0, 0);
+ // display.print("Hola Mundo!");
+ // display.display(); // Muestra en pantalla
+  
+}
+
+void loop()
+{
+  
+  unsigned long estadoMillisActual = millis();
+  
+  int boton = digitalRead(posicionBoton);
+  //detectamos si el boton se presiono (flanco de subida).
+  if ((boton == HIGH) && (estadoBotonAnterior == LOW) && (estadoMillisActual - millisBoton > 50) ) {
+      	modo=!modo; //hace que cambie de modo cada vez que se preciona el boton
+      	millisBoton = estadoMillisActual;
+    	Serial.println("Boton apretado");
+  }
+  
+  estadoBotonAnterior = boton;
+int medidorLuz = 0; 
+  if (modo == 1) { //si dijeramos solo if (modo) es lo mismo, porque modo es como un true==1/false==0
+    digitalWrite(entradas[0], HIGH);  
+    digitalWrite(entradas[1], LOW);
+    medidorLuz = analogRead(pisicionMedidorLuz);
+	Serial.println(medidorLuz);
+   display.setCursor(0, 0);
+    display.clearDisplay();
+  display.print(medidorLuz);
+  display.display();
+    
+  } else {
+    display.clearDisplay();
+    digitalWrite(entradas[1], HIGH);  
+    digitalWrite(entradas[0], LOW);
+  }
+  
+}
