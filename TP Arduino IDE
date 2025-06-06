@@ -1,12 +1,12 @@
-#include <Wire.h>
-#include <Adafruit_GFX.h>
-#include <Adafruit_SSD1306.h>
+#include <Wire.h> 
+#include <LiquidCrystal_I2C.h>
 
-#define ANCHO_PANTALLA 128
-#define ALTO_PANTALLA 64
+//Crear el objeto lcd  dirección  0x3F y 16 columnas x 2 filas
+LiquidCrystal_I2C lcd(0x27,16,2);  //
 
-// Crea el objeto de display: dirección I2C 0x3C es común
-Adafruit_SSD1306 display(ANCHO_PANTALLA, ALTO_PANTALLA, &Wire, -1);
+
+
+
 
 int estadoBoton1Anterior =LOW;
 int entradas[] = {2,3};
@@ -16,6 +16,9 @@ int estadoBotonAnterior = LOW;
 unsigned long  millisBoton = 0;
 int modo = 0;
 int pisicionMedidorLuz = A0;
+int medidorMic = A1;
+
+int micD = 5;
 
 
 void setup()
@@ -27,19 +30,19 @@ void setup()
   }
   pinMode(posicionBoton, INPUT);
   pinMode(pisicionMedidorLuz,INPUT);
+  pinMode(medidorMic,INPUT);
+   pinMode(micD,INPUT);
   
-  // Inicializa el OLED
-  if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
-    Serial.println(F("No se encontró el OLED"));
-    while (true); // Detiene si falla
-  }
+ // Inicializar el LCD
+  lcd.init();
+  lcd.clear();
+  //Encender la luz de fondo.
+  lcd.backlight();
+  
+  
+   
 
-  display.clearDisplay(); // Limpia pantalla
-  display.setTextSize(3); // Tamaño de letra (1 a 3)
-  display.setTextColor(SSD1306_WHITE);
- // display.setCursor(0, 0);
- // display.print("Hola Mundo!");
- // display.display(); // Muestra en pantalla
+  
   
 }
 
@@ -57,21 +60,33 @@ void loop()
   }
   
   estadoBotonAnterior = boton;
+   int cantidadSonido = 0;
 int medidorLuz = 0; 
   if (modo == 1) { //si dijeramos solo if (modo) es lo mismo, porque modo es como un true==1/false==0
     digitalWrite(entradas[0], HIGH);  
     digitalWrite(entradas[1], LOW);
     medidorLuz = analogRead(pisicionMedidorLuz);
 	Serial.println(medidorLuz);
-   display.setCursor(0, 0);
-    display.clearDisplay();
-  display.print(medidorLuz);
-  display.display();
+  lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.print(medidorLuz);
+
+  delay(500);
+    lcd.clear();
+   
     
   } else {
-    display.clearDisplay();
+      int microDigital = digitalRead(micD);
+   cantidadSonido = analogRead(medidorMic);
     digitalWrite(entradas[1], HIGH);  
     digitalWrite(entradas[0], LOW);
+     lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.print(cantidadSonido);
+    //Serial.println(cantidadSonido);
+    Serial.println(microDigital);
+    delay(200);
+    lcd.clear();
   }
   
 }
