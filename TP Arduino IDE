@@ -81,11 +81,27 @@ int medidorLuz = 0;
     digitalWrite(entradas[1], HIGH);  
     digitalWrite(entradas[0], LOW);
      lcd.clear();
-  lcd.setCursor(0,0);
-  lcd.print(cantidadSonido);
+ // lcd.setCursor(0,0);
+ // lcd.print(cantidadSonido);
     //Serial.println(cantidadSonido);
     Serial.println(microDigital);
-    delay(200);
+ //   delay(200);
+  //  lcd.clear();
+     bool soundDetected = digitalRead(micD);
+      
+     
+  if (soundDetected)
+  {
+    lcd.setCursor(0,0);
+   lcd.print("ruido");
+   
+    delay(1000);
+    lcd.clear();
+  }
+  lcd.setCursor(0,0);
+    lcd.print("no hay ruido");
+    
+    delay(500);
     lcd.clear();
   }
   
