@@ -46,63 +46,54 @@ void setup()
   
 }
 
+unsigned long tiempoAnteriorDisplay = 0;
+const unsigned long intervaloDisplay = 500; // actualizar cada 500 ms
+
 void loop()
 {
-  
-  unsigned long estadoMillisActual = millis();
-  
+  unsigned long ahora = millis(); 
   int boton = digitalRead(posicionBoton);
-  //detectamos si el boton se presiono (flanco de subida).
-  if ((boton == HIGH) && (estadoBotonAnterior == LOW) && (estadoMillisActual - millisBoton > 50) ) {
-      	modo=!modo; //hace que cambie de modo cada vez que se preciona el boton
-      	millisBoton = estadoMillisActual;
-    	Serial.println("Boton apretado");
+
+  if ((boton == HIGH) && (estadoBotonAnterior == LOW) && (ahora - millisBoton > 300)) {
+    millisBoton = ahora;
+    modo = !modo;
   }
-  
   estadoBotonAnterior = boton;
-   int cantidadSonido = 0;
-int medidorLuz = 0; 
-  if (modo == 1) { //si dijeramos solo if (modo) es lo mismo, porque modo es como un true==1/false==0
+
+  int cantidadSonido = 0;
+  int medidorLuz = 0;
+
+  if (modo == 1) {
     digitalWrite(entradas[0], HIGH);  
     digitalWrite(entradas[1], LOW);
-    medidorLuz = analogRead(pisicionMedidorLuz);
-	Serial.println(medidorLuz);
-  lcd.clear();
-  lcd.setCursor(0,0);
-  lcd.print(medidorLuz);
-
-  delay(500);
-    lcd.clear();
-   
     
+    // Actualizar el valor cada cierto tiempo
+    if (ahora - tiempoAnteriorDisplay > intervaloDisplay) {
+      tiempoAnteriorDisplay = ahora;
+
+      medidorLuz = analogRead(pisicionMedidorLuz);
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("Luz: ");
+      lcd.print(medidorLuz);
+    }
+
   } else {
-      int microDigital = digitalRead(micD);
-   cantidadSonido = analogRead(medidorMic);
     digitalWrite(entradas[1], HIGH);  
     digitalWrite(entradas[0], LOW);
-     lcd.clear();
- // lcd.setCursor(0,0);
- // lcd.print(cantidadSonido);
-    //Serial.println(cantidadSonido);
-    Serial.println(microDigital);
- //   delay(200);
-  //  lcd.clear();
-     bool soundDetected = digitalRead(micD);
-      
-     
-  if (soundDetected)
-  {
-    lcd.setCursor(0,0);
-   lcd.print("ruido");
-   
-    delay(1000);
-    lcd.clear();
-  }
-  lcd.setCursor(0,0);
-    lcd.print("no hay ruido");
+
+    bool soundDetected = digitalRead(micD);
     
-    delay(500);
-    lcd.clear();
+    if (ahora - tiempoAnteriorDisplay > intervaloDisplay) {
+      tiempoAnteriorDisplay = ahora;
+
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      if (soundDetected) {
+        lcd.print("Ruido detectado");
+      } else {
+        lcd.print("No hay ruido");
+      }
+    }
   }
-  
 }
