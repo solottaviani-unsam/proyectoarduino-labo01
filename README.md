@@ -74,7 +74,8 @@ El cambio de modo se realiza presionando un botón, y un LED se enciende para in
 
 ## 📸 Esquema basico 
 
-// TODO: Agregar esquema
+![image](https://github.com/user-attachments/assets/d83cccd1-526b-4bd5-8dd4-2c80e683669f)
+
 
 ---
 
