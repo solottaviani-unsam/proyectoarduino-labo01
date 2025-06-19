@@ -76,6 +76,20 @@ void loop()
       lcd.setCursor(0, 0);
       lcd.print("Luz: ");
       lcd.print(medidorLuz);
+      // mostramos un mensaje segun la cantidad de luz -> eliminar si el mensaje no se muestra correctamente
+       if (medidorLuz < 200) {
+        lcd.setCursor(0, 1);
+      	lcd.print("Luz tenue");
+        lcd.clear();
+      } else if (medidorLuz >= 200 && medidorLuz < 400) {
+        lcd.setCursor(0,1);
+        lcd.print("Luz media");
+        lcd.clear();
+      } else {
+        lcd.setCursor(0,1);
+        lcd.print("Luz fuerte"); 
+        lcd.clear();
+      }
     }
 
   } else {
