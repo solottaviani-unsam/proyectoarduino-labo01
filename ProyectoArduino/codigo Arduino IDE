@@ -1,11 +1,8 @@
-#include <Wire.h> 
 #include <LiquidCrystal_I2C.h>
+#include <Wire.h> 
 
-//Crear el objeto lcd  dirección  0x3F y 16 columnas x 2 filas
+//Crear el objeto lcd  dirección (0x27 o 0x3F) y 16 columnas x 2 filas
 LiquidCrystal_I2C lcd(0x27,16,2);  //
-
-
-
 
 
 int estadoBoton1Anterior =LOW;
@@ -20,30 +17,22 @@ int medidorMic = A1;
 
 int micD = 5;
 
-
 void setup()
 {
   Serial.begin(9600);
-  pinMode(LED_BUILTIN, OUTPUT);
-  for (int i = 0; i < sizeof(entradas); i++ ){
-  	pinMode(entradas[i], OUTPUT);
-  }
-  pinMode(posicionBoton, INPUT);
-  pinMode(pisicionMedidorLuz,INPUT);
-  pinMode(medidorMic,INPUT);
-   pinMode(micD,INPUT);
-  
- // Inicializar el LCD
+  // Inicializar el LCD
   lcd.init();
   lcd.clear();
   //Encender la luz de fondo.
   lcd.backlight();
-  
-  
-   
-
-  
-  
+  pinMode(LED_BUILTIN, OUTPUT);
+  for (int i = 0; i < sizeof(entradas); i++ ){
+    pinMode(entradas[i], OUTPUT);
+  }
+  pinMode(posicionBoton, INPUT);
+  pinMode(pisicionMedidorLuz,INPUT);
+  pinMode(medidorMic,INPUT);
+  pinMode(micD,INPUT);
 }
 
 unsigned long tiempoAnteriorDisplay = 0;
@@ -77,18 +66,13 @@ void loop()
       lcd.print("Luz: ");
       lcd.print(medidorLuz);
       // mostramos un mensaje segun la cantidad de luz -> eliminar si el mensaje no se muestra correctamente
+      lcd.setCursor(0, 1);
        if (medidorLuz < 200) {
-        lcd.setCursor(0, 1);
-      	lcd.print("Luz tenue");
-        lcd.clear();
+        lcd.print("Luz tenue");
       } else if (medidorLuz >= 200 && medidorLuz < 400) {
-        lcd.setCursor(0,1);
         lcd.print("Luz media");
-        lcd.clear();
       } else {
-        lcd.setCursor(0,1);
-        lcd.print("Luz fuerte"); 
-        lcd.clear();
+        lcd.print("Luz fuerte");
       }
     }
 
