@@ -36,7 +36,7 @@ void setup()
 }
 
 unsigned long tiempoAnteriorDisplay = 0;
-const unsigned long intervaloDisplay = 500; // actualizar cada 500 ms
+const unsigned long intervaloDisplay = 100; // actualizar cada 500 ms
 
 void loop()
 {
@@ -61,15 +61,16 @@ void loop()
       tiempoAnteriorDisplay = ahora;
 
       medidorLuz = analogRead(pisicionMedidorLuz);
+      Serial.println(medidorLuz);
       lcd.clear();
       lcd.setCursor(0, 0);
       lcd.print("Luz: ");
       lcd.print(medidorLuz);
       // mostramos un mensaje segun la cantidad de luz -> eliminar si el mensaje no se muestra correctamente
       lcd.setCursor(0, 1);
-       if (medidorLuz < 200) {
+       if (medidorLuz < 600) {
         lcd.print("Luz tenue");
-      } else if (medidorLuz >= 200 && medidorLuz < 400) {
+      } else if (medidorLuz >= 600 && medidorLuz < 900) {
         lcd.print("Luz media");
       } else {
         lcd.print("Luz fuerte");
@@ -79,9 +80,10 @@ void loop()
   } else {
     digitalWrite(entradas[1], HIGH);  
     digitalWrite(entradas[0], LOW);
-
+    cantidadSonido = analogRead(medidorMic);
+    Serial.println(cantidadSonido);
     bool soundDetected = digitalRead(micD);
-    
+    Serial.println(soundDetected);
     if (ahora - tiempoAnteriorDisplay > intervaloDisplay) {
       tiempoAnteriorDisplay = ahora;
 
@@ -89,6 +91,7 @@ void loop()
       lcd.setCursor(0, 0);
       if (soundDetected) {
         lcd.print("Ruido detectado");
+        delay(1500);
       } else {
         lcd.print("No hay ruido");
       }
